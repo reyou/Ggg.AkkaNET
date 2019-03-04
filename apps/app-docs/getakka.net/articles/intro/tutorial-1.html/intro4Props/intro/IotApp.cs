@@ -16,6 +16,7 @@ namespace intro
             {
                 // Create top level supervisor
                 IActorRef supervisor = system.ActorOf(Props.Create<IotSupervisor>(), "iot-supervisor");
+                // Asynchronously tells a message to an IActorRef
                 supervisor.Tell("telling");
 
             }
