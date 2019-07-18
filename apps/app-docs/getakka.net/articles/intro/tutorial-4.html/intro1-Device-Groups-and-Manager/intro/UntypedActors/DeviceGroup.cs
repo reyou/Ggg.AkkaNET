@@ -4,6 +4,7 @@ using System.Text;
 using Akka.Actor;
 using Akka.Event;
 using intro.Models;
+using Newtonsoft.Json;
 
 namespace intro.UntypedActors
 {
@@ -11,7 +12,7 @@ namespace intro.UntypedActors
     {
         private readonly Dictionary<string, IActorRef> _deviceIdToActor = new Dictionary<string, IActorRef>();
         private readonly Dictionary<IActorRef, string> _actorToDeviceId = new Dictionary<IActorRef, string>();
-
+        private long nextCollectionId = 0L;
         public DeviceGroup(string groupId)
         {
             GroupId = groupId;
@@ -25,8 +26,16 @@ namespace intro.UntypedActors
 
         protected override void OnReceive(object message)
         {
+            Console.WriteLine(JsonConvert.SerializeObject(new
+            {
+                Message = $"{GetType().Name}.OnReceive",
+                message
+            }, Formatting.Indented));
             switch (message)
             {
+                case RequestAllTemperatures r:
+                    Context.ActorOf(DeviceGroupQuery.Props(_actorToDeviceId, r.RequestId, Sender, TimeSpan.FromSeconds(3)));
+                    break;
                 case RequestTrackDevice trackMsg when trackMsg.GroupId.Equals(GroupId):
                     if (_deviceIdToActor.TryGetValue(trackMsg.DeviceId, out IActorRef actorRef))
                     {
@@ -61,7 +70,15 @@ namespace intro.UntypedActors
             }
         }
 
-        public static Props Props(string groupId) => Akka.Actor.Props.Create(() => new DeviceGroup(groupId));
+        public static Props Props(string groupId)
+        {
+            Console.WriteLine(JsonConvert.SerializeObject(new
+            {
+                Message = $"{typeof(DeviceGroup).Name}.Props",
+                groupId
+            }, Formatting.Indented));
+            return Akka.Actor.Props.Create(() => new DeviceGroup(groupId));
+        }
     }
 
 

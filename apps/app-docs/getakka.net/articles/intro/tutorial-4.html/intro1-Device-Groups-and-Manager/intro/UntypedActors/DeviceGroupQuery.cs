@@ -4,6 +4,7 @@ using System.Text;
 using Akka.Actor;
 using Akka.Event;
 using intro.Models;
+using Newtonsoft.Json;
 
 namespace intro.UntypedActors
 {
@@ -25,6 +26,11 @@ namespace intro.UntypedActors
 
         protected override void PreStart()
         {
+            Console.WriteLine(JsonConvert.SerializeObject(new
+            {
+                Message = $"{GetType().Name}.PreStart",
+                ActorToDeviceId
+            }, Formatting.Indented));
             foreach (IActorRef deviceActor in ActorToDeviceId.Keys)
             {
                 Context.Watch(deviceActor);
@@ -34,6 +40,10 @@ namespace intro.UntypedActors
 
         protected override void PostStop()
         {
+            Console.WriteLine(JsonConvert.SerializeObject(new
+            {
+                Message = $"{GetType().Name}.PostStop",
+            }, Formatting.Indented));
             queryTimeoutTimer.Cancel();
         }
 
@@ -47,6 +57,12 @@ namespace intro.UntypedActors
             Dictionary<string, ITemperatureReading> repliesSoFar,
             HashSet<IActorRef> stillWaiting)
         {
+            Console.WriteLine(JsonConvert.SerializeObject(new
+            {
+                Message = $"{GetType().Name}.WaitingForReplies",
+                repliesSoFar,
+                stillWaitingCount = stillWaiting.Count
+            }, Formatting.Indented));
             return message =>
             {
                 switch (message)
@@ -81,12 +97,16 @@ namespace intro.UntypedActors
             };
         }
 
-        public void ReceivedResponse(
-            IActorRef deviceActor,
-            ITemperatureReading reading,
-            HashSet<IActorRef> stillWaiting,
-            Dictionary<string, ITemperatureReading> repliesSoFar)
+        public void ReceivedResponse(IActorRef deviceActor, ITemperatureReading reading, HashSet<IActorRef> stillWaiting, Dictionary<string, ITemperatureReading> repliesSoFar)
         {
+            Console.WriteLine(JsonConvert.SerializeObject(new
+            {
+                Message = $"{GetType().Name}.ReceivedResponse",
+                deviceActor = deviceActor.ToString(),
+                reading,
+                stillWaitingCount = stillWaiting.Count,
+                repliesSoFarCount = repliesSoFar.Count
+            }, Formatting.Indented));
             Context.Unwatch(deviceActor);
             string deviceId = ActorToDeviceId[deviceActor];
             stillWaiting.Remove(deviceActor);
