@@ -1,0 +1,9 @@
+﻿@using Newtonsoft.Json
+
+@{
+    ViewData["Title"] = "Index";
+    dynamic pageModel = Model;
+}
+
+<h1>Index</h1>
+<div>@JsonConvert.SerializeObject(pageModel)</div>
