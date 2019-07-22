@@ -1,7 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Akka.Actor;
+using intro1.Actions;
+using intro1.ActionTypes;
+using intro1.Actors;
+using intro1.Entities;
 
 namespace intro1.TestSuites
 {
@@ -17,19 +22,20 @@ namespace intro1.TestSuites
             ActorSystem.Log.Error(new Exception("Sample exception"), "Error Log {0}", DateTime.Now);
         }
 
-        public void qqq(ApplicationEnvironment applicationEnvironment)
+        public void CreateActorExample(ApplicationEnvironment applicationEnvironment)
         {
             ActorSystem = ActorSystem.Create("app");
             //here you would register your toplevel actors
             IActorRef userActor = ActorSystem.ActorOf<UserActor>();
-        }
-    }
-
-    public class UserActor : UntypedActor
-    {
-        protected override void OnReceive(object message)
-        {
-            throw new NotImplementedException();
+            IActorRef registerActor = ActorSystem.ActorOf<RegisterActor>();
+            IActorRef emailActor = ActorSystem.ActorOf<EmailActor>();
+            UserAction userAction = new UserAction(UserActionTypes.GenerateRandom);
+            Task<TestUser> testUser = userActor.Ask<TestUser>(userAction);
+            testUser.Wait();
+            TestUser testUserResult = testUser.Result;
+            Task<object> registerTask = registerActor.Ask(testUserResult);
+            registerTask.Wait();
+            emailActor.Tell(testUserResult);
         }
     }
 }

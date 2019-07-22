@@ -35,7 +35,10 @@ namespace intro1
             else
             {
                 Console.WriteLine();
-                Console.WriteLine(@"Executing: {0}", actionToRun.Title);
+                TestUtilities.ConsoleWriteJson(new
+                {
+                    Message = $"Executing: {actionToRun.Title}",
+                });
                 Console.WriteLine();
                 try
                 {
