@@ -1,4 +1,5 @@
-﻿using intro1.ActionTypes;
+﻿using System;
+using intro1.ActionTypes;
 using intro1.Entities;
 
 namespace intro1.Actions
@@ -7,6 +8,8 @@ namespace intro1.Actions
     {
         public UserActionTypes ActionType { get; set; }
         public TestUser User { get; set; }
+        public Exception ExceptionToThrow { get; set; }
+
         public UserAction(UserActionTypes actionType)
         {
             this.ActionType = actionType;

@@ -1,5 +1,6 @@
 ﻿using System;
 using Akka.Actor;
+using intro1.Actions;
 using intro1.Entities;
 
 namespace intro1.Actors
@@ -15,10 +16,27 @@ namespace intro1.Actors
             });
             switch (message)
             {
+                case UserAction userAction:
+                    HandleUserAction(userAction, Sender);
+                    break;
                 case TestUser user:
                     HandleUser(user, Sender);
                     break;
             }
+        }
+
+        private void HandleUserAction(UserAction userAction, IActorRef sender)
+        {
+            if (userAction.ExceptionToThrow != null)
+            {
+                throw userAction.ExceptionToThrow;
+            }
+            TestUtilities.ConsoleWriteJson(new
+            {
+                Message = $"{GetType().Name}.HandleUser user registered into the system successfully",
+                userAction
+            });
+            sender.Tell(true);
         }
 
         private void HandleUser(TestUser user, IActorRef sender)

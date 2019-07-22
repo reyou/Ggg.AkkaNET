@@ -19,7 +19,7 @@ namespace intro1
             List<TestSuiteMethod> testRunOptions = TestRunManager.GetTestRunOptions(applicationEnvironment);
             foreach (TestSuiteMethod testRunOption in testRunOptions)
             {
-                Console.WriteLine($"{testRunOption.Order}- {testRunOption.Title}");
+                Console.WriteLine($"{testRunOption.Order}- {testRunOption.Title} ({testRunOption.Order})");
             }
             // pick an option
             string option = Console.ReadLine();
