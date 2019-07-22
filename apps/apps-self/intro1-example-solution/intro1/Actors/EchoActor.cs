@@ -11,6 +11,7 @@ namespace intro1.Actors
             TestUtilities.ConsoleWriteJson(new
             {
                 Message = $"{GetType().Name} PreStart",
+                Address = Self.ToString(),
             });
         }
 
@@ -20,6 +21,7 @@ namespace intro1.Actors
             TestUtilities.ConsoleWriteJson(new
             {
                 Message = $"{GetType().Name} PostStop",
+                Address = Self.ToString(),
             });
         }
 
@@ -28,13 +30,28 @@ namespace intro1.Actors
             TestUtilities.ConsoleWriteJson(new
             {
                 Message = $"{GetType().Name} received message",
+                Address = Self.ToString(),
                 message
             });
             switch (message)
             {
                 case Exception exception:
                     throw exception;
+                case string messageRef:
+                    HandleMessage(messageRef, Sender);
+                    break;
+
             }
+        }
+
+        private void HandleMessage(string message, IActorRef sender)
+        {
+            TestUtilities.ConsoleWriteJson(new
+            {
+                Message = $"{GetType().Name}.HandleMessage processed",
+                Address = Self.ToString(),
+            });
+            sender.Tell(true);
         }
     }
 }

@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Data.SqlClient;
-using System.Diagnostics;
-using System.Threading;
 using System.Threading.Tasks;
 using Akka.Actor;
-using Akka.Pattern;
 using intro1.Actions;
 using intro1.ActionTypes;
 using intro1.Actors;
@@ -39,6 +33,15 @@ namespace intro1.TestSuites
             Task<object> registerTask = registerActor.Ask(testUserResult);
             registerTask.Wait();
             emailActor.Tell(testUserResult);
+        }
+
+        public void ActorSystemActorSelection(ApplicationEnvironment applicationEnvironment)
+        {
+            ActorSystem actorSystem = ActorSystem.Create("app");
+            actorSystem.ActorOf<EchoActor>("echoActor1");
+            actorSystem.ActorOf<EchoActor>("echoActor2");
+            actorSystem.ActorOf<EchoActor>("echoActor3");
+            actorSystem.ActorSelection("/user/*").Tell("Send Message to Actors");
         }
 
         public void TellException(ApplicationEnvironment applicationEnvironment)
