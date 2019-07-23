@@ -22,7 +22,7 @@ namespace intro1
 
         public static void ThreadSleepSeconds(int seconds)
         {
-            Console.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId} sleeps {seconds} sec...");
+            Console.WriteLine($"ManagedThreadId {Thread.CurrentThread.ManagedThreadId} ({Thread.CurrentThread.Name}) sleeps {seconds} sec...");
             Thread.Sleep(TimeSpan.FromSeconds(seconds));
         }
 
