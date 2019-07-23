@@ -13,6 +13,7 @@ namespace intro1.Actors
                 Message = $"{GetType().Name} PreStart",
                 Address = Self.ToString(),
             });
+            TestUtilities.ThreadSleepSeconds(10);
         }
 
         protected override void PostStop()
@@ -23,6 +24,7 @@ namespace intro1.Actors
                 Message = $"{GetType().Name} PostStop",
                 Address = Self.ToString(),
             });
+            TestUtilities.ThreadSleepSeconds(10);
         }
 
         protected override void OnReceive(object message)
@@ -33,6 +35,7 @@ namespace intro1.Actors
                 Address = Self.ToString(),
                 message
             });
+            TestUtilities.ThreadSleepSeconds(10);
             switch (message)
             {
                 case Exception exception:
@@ -42,6 +45,7 @@ namespace intro1.Actors
                     break;
 
             }
+
         }
 
         private void HandleMessage(string message, IActorRef sender)
@@ -50,8 +54,9 @@ namespace intro1.Actors
             {
                 Message = $"{GetType().Name}.HandleMessage processed",
                 Address = Self.ToString(),
+                message
             });
-            sender.Tell(true);
+            TestUtilities.ThreadSleepSeconds(10);
         }
     }
 }

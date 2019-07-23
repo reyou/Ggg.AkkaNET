@@ -28,12 +28,11 @@ namespace intro1.TestSuites
             Props childProps = Props.Create<EchoActor>();
             //
             TimeSpan minBackoff = TimeSpan.FromSeconds(3);
-            string childName = "myEcho";
             TimeSpan maxBackoff = TimeSpan.FromSeconds(30);
             double randomFactor = 0.2;
             int maxNrOfRetries = 2;
             // Builds back-off options for creating a back-off supervisor.
-            BackoffOptions backoffOptions = Backoff.OnStop(childProps, childName, minBackoff, maxBackoff, randomFactor, maxNrOfRetries);
+            BackoffOptions backoffOptions = Backoff.OnStop(childProps, "myEcho", minBackoff, maxBackoff, randomFactor, maxNrOfRetries);
             Props supervisor = BackoffSupervisor.Props(backoffOptions);
             IActorRef supervisorActor = actorSystem.ActorOf(supervisor, "echoSupervisor");
             supervisorActor.Tell("EchoMessage1");
@@ -49,24 +48,21 @@ namespace intro1.TestSuites
             Props childProps = Props.Create<EchoActor>();
             //
             TimeSpan minBackoff = TimeSpan.FromSeconds(3);
-            string childName = "myEcho";
+
             TimeSpan maxBackoff = TimeSpan.FromSeconds(30);
             double randomFactor = 0.2;
             int maxNrOfRetries = 2;
             // Builds back-off options for creating a back-off supervisor.
-            BackoffOptions backoffOptions = Backoff.OnFailure(childProps, childName, minBackoff, maxBackoff, randomFactor, maxNrOfRetries);
+            BackoffOptions backoffOptions = Backoff.OnFailure(childProps, "myEcho", minBackoff, maxBackoff, randomFactor, maxNrOfRetries);
             Props supervisor = BackoffSupervisor.Props(backoffOptions);
             IActorRef supervisorActor = actorSystem.ActorOf(supervisor, "echoSupervisor");
             supervisorActor.Tell("EchoMessage1");
             supervisorActor.Tell(new Exception("File not found exception"));
+            TestUtilities.ThreadSleepSeconds(5);
             supervisorActor.Tell("EchoMessage2");
-            // wait the actor to come back
-            TestUtilities.ConsoleWriteJson(new
-            {
-                Message = "Waiting 4 seconds for actor to restart"
-            });
-            Thread.Sleep(TimeSpan.FromSeconds(4));
+            TestUtilities.ThreadSleepSeconds(5);
             supervisorActor.Tell("EchoMessage3");
+            TestUtilities.MethodEnds();
         }
 
         public void BackoffSupervisorOnFailureDeadLetter(ApplicationEnvironment applicationEnvironment)
@@ -111,6 +107,7 @@ namespace intro1.TestSuites
                     Message = $"{GetType().Name} OneForOneStrategy",
                     ExceptionMessage = exception.Message
                 });
+                TestUtilities.ThreadSleepSeconds(10);
                 if (exception is FileNotFoundException)
                 {
                     return Directive.Restart;
@@ -125,6 +122,7 @@ namespace intro1.TestSuites
             supervisorActor.Tell(new FileNotFoundException("File not found exception"));
             supervisorActor.Tell("EchoMessage2");
             supervisorActor.Tell("EchoMessage3");
+            TestUtilities.MethodEnds();
         }
     }
 }

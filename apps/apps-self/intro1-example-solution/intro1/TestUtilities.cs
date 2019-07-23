@@ -19,5 +19,18 @@ namespace intro1
             }, Formatting.Indented));
             Console.WriteLine();
         }
+
+        public static void ThreadSleepSeconds(int seconds)
+        {
+            Console.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId} sleeps {seconds} sec...");
+            Thread.Sleep(TimeSpan.FromSeconds(seconds));
+        }
+
+        public static void MethodEnds()
+        {
+            Console.WriteLine();
+            Console.WriteLine("=========== Method Ends =================");
+            Console.WriteLine();
+        }
     }
 }
